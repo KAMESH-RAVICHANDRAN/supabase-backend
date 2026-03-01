@@ -1,0 +1,23 @@
+# Railway deployment configuration for the Supabase backend stack
+# Deploy this directory as a Railway service with Docker Compose support.
+#
+# Steps:
+#   1. Create a new Railway project and link this repo.
+#   2. Set the "Root Directory" to `docker` in Railway project settings.
+#   3. Copy .env.example -> .env and fill in all secrets, then add every
+#      variable from .env to Railway's "Variables" tab (raw values, no file).
+#   4. Railway will detect the docker-compose.yml and deploy all services.
+#   5. Expose port 8000 (Kong gateway) as the public-facing endpoint.
+#      Set SUPABASE_PUBLIC_URL to the Railway-generated domain in your vars.
+#
+# After deploy, point Vercel Studio env vars at this Railway domain:
+#   SUPABASE_URL          = https://<your-railway-domain>
+#   SUPABASE_PUBLIC_URL   = https://<your-railway-domain>
+#   STUDIO_PG_META_URL    = https://<your-railway-domain>/pg
+
+[build]
+  dockerComposePath = "docker-compose.yml"
+
+[deploy]
+  restartPolicyType = "ON_FAILURE"
+  restartPolicyMaxRetries = 10
