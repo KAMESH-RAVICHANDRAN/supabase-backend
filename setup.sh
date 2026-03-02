@@ -1,0 +1,54 @@
+#!/bin/bash
+set -e
+
+echo "=== Installing Docker ==="
+sudo apt-get update -qq
+sudo apt-get install -y docker.io docker-compose-plugin git
+sudo usermod -aG docker ubuntu
+sudo systemctl enable docker
+sudo systemctl start docker
+
+echo "=== Cloning repo ==="
+cd /home/ubuntu
+if [ -d "supabase-backend" ]; then
+  cd supabase-backend && git pull
+else
+  git clone https://github.com/KAMESH-RAVICHANDRAN/supabase-backend.git
+  cd supabase-backend
+fi
+
+echo "=== Writing .env ==="
+cat > .env << 'ENVEOF'
+POSTGRES_PASSWORD=94dacc6173143fcc3440f1fc7c9a9c0e
+JWT_SECRET=lYkNzYQQ3iXwrLyc0mpwjrjoASsKUfUVyPwegSl6
+ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzcyMzgzNDc1LCJleHAiOjE5MzAwNjM0NzV9.9KFHVIy7viHx2gBCcjhVdCoLPLc_8UnzHmdE3mJGzQg
+SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaXNzIjoic3VwYWJhc2UiLCJpYXQiOjE3NzIzODM0NzUsImV4cCI6MTkzMDA2MzQ3NX0.aigmHcvYGLknGRlwjU_PC0Y_dfI3ZAJ3H2j-UqZc-_U
+DASHBOARD_USERNAME=supabase
+DASHBOARD_PASSWORD=8074dfbe7e802ac76e90da0b65bc50f6
+SITE_URL=https://supabase-ennuthu-studio.vercel.app
+API_EXTERNAL_URL=http://56.228.35.139:8000
+SUPABASE_PUBLIC_URL=http://56.228.35.139:8000
+SECRET_KEY_BASE=uxhoa/bMdePfmxmZz05SnT+sDiHm55xvRavhwAkk41Mhk4MBRldNar7lh5aPPw99
+VAULT_ENC_KEY=1e08250b60ae20e214b07a3279aa50bd
+PG_META_CRYPTO_KEY=8Lqc1T4X1bp100ROpjSySrqfNiyt+5dq
+LOGFLARE_PUBLIC_ACCESS_TOKEN=keLpyd+LVXMz6snxMslFSU+6IYNAae8i
+LOGFLARE_PRIVATE_ACCESS_TOKEN=M2evtLixHp2Qj0LHwxI+e1M4qrm4CDoH
+S3_PROTOCOL_ACCESS_KEY_ID=78e8d46e3241ea5bb04199295331991d
+S3_PROTOCOL_ACCESS_KEY_SECRET=5b49f7dd8b29f0961a1f19408f87699a3b68ad63ea4b30b07a9fe9b2f39fd7fc
+MINIO_ROOT_USER=supabase-s3
+MINIO_ROOT_PASSWORD=33158fe035f519189435f52072b201ee
+POSTGRES_HOST=db
+POSTGRES_DB=postgres
+POSTGRES_PORT=5432
+POOLER_TENANT_ID=1244573a626f017a
+ENVEOF
+
+echo "=== Starting Supabase (this takes 2-3 minutes) ==="
+sudo docker compose up -d
+
+echo ""
+echo "========================================="
+echo "Done! Supabase is starting up."
+echo "Check status: sudo docker compose ps"
+echo "API ready at: http://56.228.35.139:8000"
+echo "========================================="
